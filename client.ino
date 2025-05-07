@@ -59,3 +59,16 @@ void sendLogToServer(String uid, String status) {
       http.end();
     }
   }
+
+  void sendLocationToServer(float lat, float lng) {
+    if (WiFi.status() == WL_CONNECTED) {
+      HTTPClient http;
+      String url = "http://" + String(serverIP) + ":" + String(serverPort) + "/location";
+      http.begin(url);
+      http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+      String postData = "lat=" + String(lat, 6) + "&lng=" + String(lng, 6);
+      int httpCode = http.POST(postData);
+      Serial.printf("Location POST status: %d\n", httpCode);
+      http.end();
+    }
+  }
