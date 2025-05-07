@@ -86,3 +86,42 @@ void sendLogToServer(String uid, String status) {
     Serial.printf("WhatsApp GET status: %d\n", httpCode);
     http.end();
   }
+
+  // ==== Setup ====
+void setup() {
+    Serial.begin(115200);
+    pinMode(GREEN_LED, OUTPUT);
+    pinMode(RED_LED, OUTPUT);
+    digitalWrite(GREEN_LED, LOW);
+    digitalWrite(RED_LED, LOW);
+  
+    Wire.begin(1, 0);
+    lcd.init();
+    lcd.backlight();
+    lcd.setCursor(0, 0);
+    lcd.print("Connecting WiFi...");
+  
+    WiFi.begin(ssid, password);
+    int attempts = 0;
+    while (WiFi.status() != WL_CONNECTED && attempts < 20) {
+      delay(500);
+      Serial.print(".");
+      attempts++;
+    }
+  
+    lcd.clear();
+    if (WiFi.status() == WL_CONNECTED) {
+      lcd.print("WiFi connected");
+      Serial.println("\nWiFi connected!");
+    } else {
+      lcd.print("WiFi failed!");
+      Serial.println("\nWiFi failed!");
+      return;
+    }
+  
+    SPI.begin(6, 4, 5, 7);
+    mfrc522.PCD_Init();
+    delay(1000);
+    lcd.clear();
+    lcd.print("Waiting for card...");
+  }
