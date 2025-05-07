@@ -46,3 +46,16 @@ bool isAuthorized(String uid) {
   }
   return false;
 }
+
+void sendLogToServer(String uid, String status) {
+    if (WiFi.status() == WL_CONNECTED) {
+      HTTPClient http;
+      String url = "http://" + String(serverIP) + ":" + String(serverPort) + "/log";
+      http.begin(url);
+      http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+      String postData = "uid=" + uid + "&status=" + status;
+      int httpCode = http.POST(postData);
+      Serial.printf("Log POST status: %d\n", httpCode);
+      http.end();
+    }
+  }
