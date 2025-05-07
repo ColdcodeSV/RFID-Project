@@ -125,3 +125,49 @@ void setup() {
     lcd.clear();
     lcd.print("Waiting for card...");
   }
+
+// ==== Loop ====
+void loop() {
+    static unsigned long lastLocationUpdate = 0;
+  
+    if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
+      String uid = "";
+      for (byte i = 0; i < mfrc522.uid.size; i++) {
+        uid += (mfrc522.uid.uidByte[i] < 0x10 ? "0" : "") + String(mfrc522.uid.uidByte[i], HEX);
+      }
+      uid.toUpperCase();
+  
+      bool authorized = isAuthorized(uid);
+  
+      Serial.printf("UID: %s -> %s\n", uid.c_str(), authorized ? "AUTHORIZED" : "DENIED");
+  
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print(authorized ? "Access Granted" : "Access Denied");
+      lcd.setCursor(0, 1);
+      lcd.print("UID: ");
+      lcd.print(uid);
+  
+      digitalWrite(GREEN_LED, authorized ? HIGH : LOW);
+      digitalWrite(RED_LED, authorized ? LOW : HIGH);
+  
+      if (!authorized) {
+        sendWhatsApp("ACCESS DENIED | UID: " + uid);
+      }
+  
+      sendLogToServer(uid, authorized ? "GRANTED" : "DENIED");
+  
+      delay(3000);
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Waiting for card...");
+      digitalWrite(GREEN_LED, LOW);
+      digitalWrite(RED_LED, LOW);
+    }
+  
+    // Skicka plats var 15:e sekund
+    if (millis() - lastLocationUpdate > 15000) {
+      sendLocationToServer(latitude, longitude);
+      lastLocationUpdate = millis();
+    }
+  }
