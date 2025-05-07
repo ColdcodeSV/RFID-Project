@@ -72,3 +72,17 @@ void sendLogToServer(String uid, String status) {
       http.end();
     }
   }
+
+  void sendWhatsApp(String message) {
+    message.replace(" ", "+");
+    message.replace("\xE5", "%E5"); // å
+    message.replace("\xE4", "%E4"); // ä
+    message.replace("\xF6", "%F6"); // ö
+  
+    String url = "https://api.callmebot.com/whatsapp.php?phone=" + phone + "&text=" + message + "&apikey=" + apikey;
+    HTTPClient http;
+    http.begin(url);
+    int httpCode = http.GET();
+    Serial.printf("WhatsApp GET status: %d\n", httpCode);
+    http.end();
+  }
