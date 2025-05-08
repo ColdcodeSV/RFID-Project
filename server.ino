@@ -312,3 +312,21 @@ server.on("/", []() {
     )rawliteral";
     server.send(200, "text/html", html);
   });
+
+  server.on("/log", HTTP_POST, []() {
+    if (server.hasArg("uid") && server.hasArg("status")) {
+      String uid = server.arg("uid");
+      String status = server.arg("status");
+
+      struct tm timeinfo;
+      getLocalTime(&timeinfo);
+      char timestamp[20];
+      strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", &timeinfo);
+
+      addLog(uid, status, String(timestamp));
+      Serial.println("Log received: " + uid + " - " + status);
+      server.send(200, "text/plain", "OK");
+    } else {
+      server.send(400, "text/plain", "Missing parameters");
+    }
+});
