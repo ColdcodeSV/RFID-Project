@@ -347,3 +347,13 @@ server.on("/logs", []() {
     json += "]}";
     server.send(200, "application/json", json);
 });
+
+server.on("/clear", HTTP_POST, []() {
+    for (int i = 0; i < MAX_LOGS; i++) {
+      logs[i] = {"", "", ""};
+    }
+    logIndex = 0;
+    totalGranted = 0;
+    totalDenied = 0;
+    server.send(200, "text/plain", "Log cleared");
+});
