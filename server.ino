@@ -381,3 +381,11 @@ server.on("/getlocation", []() {
     String json = "{\"lat\":" + String(deviceLat, 6) + ",\"lng\":" + String(deviceLng, 6) + "}";
     server.send(200, "application/json", json);
 });
+
+server.begin();
+  Serial.println("Server started");
+}
+
+void loop() {
+  server.handleClient();
+}
