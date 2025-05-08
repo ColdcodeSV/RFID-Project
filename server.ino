@@ -365,3 +365,14 @@ server.on("/stats", []() {
     json += "}";
     server.send(200, "application/json", json);
 });
+
+server.on("/location", HTTP_POST, []() {
+    if (server.hasArg("lat") && server.hasArg("lng")) {
+      deviceLat = server.arg("lat").toFloat();
+      deviceLng = server.arg("lng").toFloat();
+      Serial.printf("Location updated: %.5f, %.5f\n", deviceLat, deviceLng);
+      server.send(200, "text/plain", "Location updated");
+    } else {
+      server.send(400, "text/plain", "Missing lat/lng");
+    }
+});
