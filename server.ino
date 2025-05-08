@@ -357,3 +357,11 @@ server.on("/clear", HTTP_POST, []() {
     totalDenied = 0;
     server.send(200, "text/plain", "Log cleared");
 });
+
+server.on("/stats", []() {
+    String json = "{";
+    json += "\"granted\":" + String(totalGranted) + ",";
+    json += "\"denied\":" + String(totalDenied);
+    json += "}";
+    server.send(200, "application/json", json);
+});
