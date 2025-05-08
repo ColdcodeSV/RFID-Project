@@ -38,3 +38,19 @@ void addLog(String uid, String status, String timestamp) {
   if (status == "GRANTED") totalGranted++;
   else if (status == "DENIED") totalDenied++;
 }
+
+void setup() {
+    Serial.begin(115200);
+    WiFi.begin(ssid, password);
+    Serial.print("Connecting to WiFi");
+  
+    while (WiFi.status() != WL_CONNECTED) {
+      delay(500);
+      Serial.print(".");
+    }
+  
+    Serial.println("\nWiFi connected!");
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+  
+    configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
