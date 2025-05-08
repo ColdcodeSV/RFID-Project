@@ -376,3 +376,8 @@ server.on("/location", HTTP_POST, []() {
       server.send(400, "text/plain", "Missing lat/lng");
     }
 });
+
+server.on("/getlocation", []() {
+    String json = "{\"lat\":" + String(deviceLat, 6) + ",\"lng\":" + String(deviceLng, 6) + "}";
+    server.send(200, "application/json", json);
+});
