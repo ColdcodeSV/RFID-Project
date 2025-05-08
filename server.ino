@@ -313,7 +313,7 @@ server.on("/", []() {
     server.send(200, "text/html", html);
   });
 
-  server.on("/log", HTTP_POST, []() {
+server.on("/log", HTTP_POST, []() {
     if (server.hasArg("uid") && server.hasArg("status")) {
       String uid = server.arg("uid");
       String status = server.arg("status");
@@ -329,4 +329,21 @@ server.on("/", []() {
     } else {
       server.send(400, "text/plain", "Missing parameters");
     }
+});
+
+server.on("/logs", []() {
+    String json = "{\"logs\":[";
+    for (int i = 0; i < MAX_LOGS; i++) {
+      int index = (logIndex + i) % MAX_LOGS;
+      if (logs[index].uid != "") {
+        json += "{";
+        json += "\"uid\":\"" + logs[index].uid + "\",";
+        json += "\"status\":\"" + logs[index].status + "\",";
+        json += "\"timestamp\":\"" + logs[index].timestamp + "\"";
+        json += "},";
+      }
+    }
+    if (json.endsWith(",")) json.remove(json.length() - 1);
+    json += "]}";
+    server.send(200, "application/json", json);
 });
